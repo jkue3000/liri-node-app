@@ -21,7 +21,7 @@ var Twitter = require('twitter');
 var client = new Twitter(requireKeys.twitter)
 var params = {screen_name: 'code4_life', count: 20};
 
-if (userSearch === "my-tweets"){
+function displayTweet(){
 	// function to get the twitter response
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
   		if (error) {
@@ -34,16 +34,9 @@ if (userSearch === "my-tweets"){
   			}
   		}
 	});
-}
+};
 
-// for loop to get songsearch into one var
-for (s = 3; s < userInput.length; s++) {
-
-	songSearch = songSearch + " " + userInput[s];
- 	
-}
-
-if (userSearch === "spotify-this-song"){
+function displaySpotify(){
 	// function to get the spotify response
 	spotify.search({ type: 'track', query: songSearch }, function(err, data) {
   		if (err) {
@@ -63,17 +56,9 @@ if (userSearch === "spotify-this-song"){
 			console.log("    ");
 		}
 	});
-}
+};
 
-// for loop for movie search params
-for (t = 3; t < userInput.length; t++) {
-	movieSearch = movieSearch + "+" + userInput[t];
-}
-
-// OMBD movie request
-var request = require('request');
-
-if (userSearch === "movie-this"){
+function displayMovie(){
 	// request function
 	request('http://www.omdbapi.com/?t='+ movieSearch +'&y=&plot=short&apikey=trilogy', function(error, response, body){
 	
@@ -100,4 +85,58 @@ if (userSearch === "movie-this"){
 	});
 }
 
-// 
+if (userSearch === "my-tweets"){
+	displayTweet();
+}
+
+// for loop to get songsearch into one var
+for (s = 3; s < userInput.length; s++) {
+
+	songSearch = songSearch + " " + userInput[s];
+ 	
+}
+
+if (userSearch === "spotify-this-song"){
+	displaySpotify();
+}
+
+// for loop for movie search params
+for (t = 3; t < userInput.length; t++) {
+	movieSearch = movieSearch + "+" + userInput[t];
+}
+
+// OMBD movie request
+var request = require('request');
+
+if (userSearch === "movie-this"){
+	displayMovie();
+}
+
+if (userSearch === "do-what-it-says"){
+	// fs call
+	fs.readFile("random.txt", "utf8", function(error, data) {
+
+
+  		if (error) {
+    		return console.log(error);
+  		}
+
+		var output = data.split(",");
+
+		console.log(output[0]);
+		console.log(output[1]);
+
+		if (output[0] === "my-tweets"){
+			displayTweet();
+		}else if(output[0] === "spotify-this-song"){
+			songSearch = output[1];
+			displaySpotify();
+
+		}else if (output[0] === "movie-this"){
+			movieSearch = output[1];
+			displayMovie();
+		}
+
+	});
+}
+
